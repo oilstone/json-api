@@ -1,23 +1,23 @@
 {
-  "name": "neomerx/json-api",
+  "name": "oilstone/json-api",
   "description": "Framework agnostic JSON API (jsonapi.org) implementation",
   "keywords": [
     "jsonapi.org",
     "json-api",
     "jsonapi",
-    "neomerx",
+    "oilstone",
     "json",
     "api"
   ],
-  "homepage": "https://github.com/neomerx/json-api",
+  "homepage": "https://github.com/oilstone/json-api",
   "support": {
-    "issues": "https://github.com/neomerx/json-api/issues"
+    "issues": "https://github.com/oilstone/json-api/issues"
   },
   "license": "Apache-2.0",
   "authors": [
     {
-      "name": "neomerx",
-      "email": "info@neomerx.com"
+      "name": "Online Solutions Ltd.",
+      "email": "support@onlinesolutionsltd.com"
     }
   ],
   "require": {
