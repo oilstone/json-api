@@ -108,7 +108,7 @@ class IdentifierAndResource implements ResourceInterface
         $this->schema          = $schema;
         $this->data            = $data;
         $this->index           = $schema->getId($data);
-        $this->type            = $schema->getType();
+        $this->type            = method_exists($schema, 'getTypeByResource') ? $schema->getTypeByResource($data) : $schema->getType();
     }
 
     /**

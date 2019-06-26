@@ -31,6 +31,7 @@ use Neomerx\JsonApi\Contracts\Schema\ErrorInterface;
 use Neomerx\JsonApi\Contracts\Schema\SchemaContainerInterface;
 use Neomerx\JsonApi\Exceptions\InvalidArgumentException;
 use Neomerx\JsonApi\Factories\Factory;
+use Neomerx\JsonApi\Wrappers\Arr;
 
 /**
  * @package Neomerx\JsonApi
@@ -104,6 +105,33 @@ class Encoder implements EncoderInterface
     {
         // encode to json
         $array  = $this->encodeDataToArray($data);
+        $result = $this->encodeToJson($array);
+
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function encodeSingletonArray(string $type, array $data): string
+    {
+        // encode to json
+        $array  = $this->encodeDataToArray(new Arr($type, $data));
+        $result = $this->encodeToJson($array);
+
+        return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function encodeCollectionArray(string $type, array $data): string
+    {
+        // encode to json
+        $array  = $this->encodeDataToArray(array_map(function ($item) use ($type) {
+            return new Arr($type, $item);
+        }, $data));
+
         $result = $this->encodeToJson($array);
 
         return $result;
