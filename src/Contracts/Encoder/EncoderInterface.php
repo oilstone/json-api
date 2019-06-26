@@ -187,6 +187,26 @@ interface EncoderInterface
     public function encodeData($data): string;
 
     /**
+     * Encode an array representing a single resource as a JSON API string.
+     *
+     * @param string $type The type of the resource
+     * @param array $data Data to encode.
+     *
+     * @return string
+     */
+    public function encodeSingletonArray(string $type, array $data): string;
+
+    /**
+     * Encode an array representing a collection of resources as a JSON API string.
+     *
+     * @param string $type The type of the resource
+     * @param array $data Data to encode.
+     *
+     * @return string
+     */
+    public function encodeCollectionArray(string $type, array $data): string;
+
+    /**
      * Encode input as JSON API string with a list of resource identifiers.
      *
      * @param object|iterable|null $data Data to encode.
