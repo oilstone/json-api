@@ -45,14 +45,15 @@ class Arr extends BaseSchema implements SchemaInterface
     public function getRelationships($resource): iterable
     {
         $relationships = [];
+        $relationshipPaths = $resource->getRelated();
 
         foreach ($resource->getData() as $type => $item) {
-            if (is_array($item)) {
+            if (isset($relationshipPaths[$type])) {
                 if (isset($item['id'])) {
-                    $item = new ArrObject($type, $item);
+                    $item = new ArrObject($type, $item, $relationshipPaths[$type]);
                 } else {
-                    $item = array_map(function ($row) use ($type) {
-                        return new ArrObject($type, $row);
+                    $item = array_map(function ($row) use ($relationshipPaths, $type) {
+                        return new ArrObject($type, $row, $relationshipPaths[$type]);
                     }, $item);
                 }
 
