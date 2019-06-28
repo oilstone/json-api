@@ -3,15 +3,17 @@
 namespace Neomerx\JsonApi\Wrappers;
 
 use ArrayAccess;
+use ArrayIterator;
 use Countable;
-use Iterator;
+use IteratorAggregate;
 use JsonSerializable;
+use Traversable;
 
 /**
  * Class Arr
  * @package Neomerx\JsonApi\Wrappers
  */
-class Arr implements ArrayAccess, Iterator, Countable, JsonSerializable
+class Arr implements ArrayAccess, Countable, JsonSerializable, IteratorAggregate
 {
     /**
      * @var string
@@ -29,14 +31,21 @@ class Arr implements ArrayAccess, Iterator, Countable, JsonSerializable
     protected $position = 0;
 
     /**
+     * @var array
+     */
+    protected $related;
+
+    /**
      * Arr constructor.
      * @param string $type
      * @param array $data
+     * @param array $related
      */
-    public function __construct(string $type, array $data)
+    public function __construct(string $type, array $data, array $related = [])
     {
         $this->type = $type;
         $this->data = $data;
+        $this->related = $related;
     }
 
     /**
@@ -56,35 +65,14 @@ class Arr implements ArrayAccess, Iterator, Countable, JsonSerializable
     }
 
     /**
-     * @return mixed
-     */
-    public function current()
-    {
-        return $this->data[$this->position];
-    }
-
-    /**
+     * @param mixed $offset
      * @return void
      */
-    public function next()
+    public function offsetUnset($offset)
     {
-        ++$this->position;
-    }
-
-    /**
-     * @return int|mixed|string|null
-     */
-    public function key()
-    {
-        return $this->position;
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid()
-    {
-        return $this->offsetExists($this->position);
+        if ($this->offsetExists($offset)) {
+            unset($this->data[$offset]);
+        }
     }
 
     /**
@@ -94,25 +82,6 @@ class Arr implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function offsetExists($offset)
     {
         return isset($this->data[$offset]);
-    }
-
-    /**
-     * @return void
-     */
-    public function rewind()
-    {
-        $this->position = 0;
-    }
-
-    /**
-     * @param mixed $offset
-     * @return void
-     */
-    public function offsetUnset($offset)
-    {
-        if ($this->offsetExists($offset)) {
-            unset($this->data[$offset]);
-        }
     }
 
     /**
@@ -167,5 +136,52 @@ class Arr implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function offsetSet($offset, $value)
     {
         $this->data[$offset] = $value;
+    }
+
+    /**
+     * @return ArrayIterator|Traversable
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->data);
+    }
+
+    /**
+     * @return array
+     */
+    public function getRelated(): array
+    {
+        $related = [];
+
+        foreach ($this->related as $relatedPath) {
+            $subRelation = null;
+            $subRelationStart = strpos($relatedPath, '.');
+
+            if (!isset($related[$relatedPath])) {
+                $related[$relatedPath] = [];
+            }
+
+            if ($subRelationStart !== false) {
+                $subRelation = substr($relatedPath, $subRelationStart + 1);
+                $relatedPath = substr($relatedPath, 0, $subRelationStart);
+            }
+
+            if ($subRelation) {
+                $related[$relatedPath][] = $subRelation;
+            }
+        }
+
+        return $related;
+    }
+
+    /**
+     * @param array $related
+     * @return Arr
+     */
+    public function setRelated(array $related): Arr
+    {
+        $this->related = $related;
+
+        return $this;
     }
 }

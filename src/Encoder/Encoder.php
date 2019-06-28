@@ -116,7 +116,7 @@ class Encoder implements EncoderInterface
     public function encodeSingletonArray(string $type, array $data): string
     {
         // encode to json
-        $array  = $this->encodeDataToArray(new Arr($type, $data));
+        $array  = $this->encodeDataToArray(new Arr($type, $data, $this->getIncludePaths()));
         $result = $this->encodeToJson($array);
 
         return $result;
@@ -129,7 +129,7 @@ class Encoder implements EncoderInterface
     {
         // encode to json
         $array  = $this->encodeDataToArray(array_map(function ($item) use ($type) {
-            return new Arr($type, $item);
+            return new Arr($type, $item, $this->getIncludePaths());
         }, $data));
 
         $result = $this->encodeToJson($array);
