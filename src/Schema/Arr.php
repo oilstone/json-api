@@ -30,9 +30,11 @@ class Arr extends BaseSchema implements SchemaInterface
      */
     public function getAttributes($resource): iterable
     {
-        return array_filter($resource->getData(), function ($item, $key) {
-            return !is_array($item) && $key !== 'id';
-        }, ARRAY_FILTER_USE_BOTH);
+        $relationshipPaths = $resource->getRelated();
+
+        return array_filter($resource->getData(), function ($key) use ($relationshipPaths) {
+            return !isset($relationshipPaths[$key]) && $key !== 'id';
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
